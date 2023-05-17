@@ -17,10 +17,8 @@ class AnimalsController extends AbstractController
     #[Route('/animals/all', name: 'app_animals', methods: ['GET'])]
     public function getAllAnimals(): JsonResponse
     {
-        dd("Test");
         $animals = $this->getDoctrine()->getRepository(Animal::class)->findAll();
 
-        dd($animals);
         return $this->json($animals);
     }
 
