@@ -23,7 +23,7 @@ class AnimalsController extends AbstractController
     {
         $animals = $this->getDoctrine()->getRepository(Animal::class)->findAll();
 
-        return $this->json($animals);
+        return new JsonResponse($animals[0]);
     }
 
     // Récupérer un animal par son id: (ok)

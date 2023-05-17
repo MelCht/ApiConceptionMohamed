@@ -20,11 +20,6 @@ class Animal
     #[ORM\Column(nullable: true)]
     private ?float $tailleMoyenne = null;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Country::class)
-     */
-    private ?Country $country = null;
-
     #[ORM\Column(nullable: true)]
     private ?float $dureeVieMoyenne = null;
 
@@ -33,6 +28,9 @@ class Animal
 
     #[ORM\Column(nullable: true)]
     private ?string $numeroTelephone = null;
+
+    #[ORM\ManyToOne(inversedBy: 'animals')]
+    private ?Country $country = null;
 
 
     public function getId(): ?int
@@ -60,18 +58,6 @@ class Animal
     public function setTailleMoyenne(?float $tailleMoyenne): self
     {
         $this->tailleMoyenne = $tailleMoyenne;
-
-        return $this;
-    }
-
-    public function getCountry(): ?Country
-    {
-        return $this->country;
-    }
-
-    public function setCountry(?Country $country): self
-    {
-        $this->country = $country;
 
         return $this;
     }
@@ -109,6 +95,18 @@ class Animal
     public function setNumeroTelephone(?string $numeroTelephone): self
     {
         $this->numeroTelephone = $numeroTelephone;
+
+        return $this;
+    }
+
+    public function getCountry(): ?Country
+    {
+        return $this->country->getNom();
+    }
+
+    public function setCountry(?Country $country): self
+    {
+        $this->country = $country;
 
         return $this;
     }

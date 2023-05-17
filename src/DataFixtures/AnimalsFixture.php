@@ -8,14 +8,20 @@ use App\Entity\Animal;
 use App\Entity\Country;
 use Faker\Factory;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
+use App\Repository\CountryRepository;
 
-class AnimalsFixture extends Fixture
+class AnimalsFixture extends Fixture implements DependentFixtureInterface
 {
+    private $countryRepository;
+    public function __construct(CountryRepository $countryRepository) {
+        $this->countryRepository = $countryRepository;
+    }
+
     public function load(ObjectManager $manager): void
     {
          $faker = Factory::create();
 
-         $countries = $manager->getRepository(Country::class)->findAll();
+         $countries = $this->countryRepository->findAll();
          $randomCountryIndex = array_rand($countries);
          $randomCountry = $countries[$randomCountryIndex];
 
