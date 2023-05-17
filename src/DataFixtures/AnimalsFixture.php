@@ -7,6 +7,7 @@ use Doctrine\Persistence\ObjectManager;
 use App\Entity\Animal;
 use App\Entity\Country;
 use Faker\Factory;
+use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 
 class AnimalsFixture extends Fixture
 {
@@ -14,20 +15,23 @@ class AnimalsFixture extends Fixture
     {
          $faker = Factory::create();
 
-                for ($i = 0; $i < 10; $i++) {
-                    $animal = new Animal();
-                    $animal->setNom($faker->name);
-                    $animal->setTailleMoyenne($faker->randomFloat(2, 0.1, 10.0));
-                    $animal->setDureeVieMoyenne($faker->numberBetween(1, 20));
-                    $animal->setArtMartial($faker->randomElement(['Karaté', 'Judo', 'Taekwondo', 'Kung Fu', 'Dance Classique']));
-                    $animal->setNumeroTelephone($faker->phoneNumber);
+         $countries = $manager->getRepository(Country::class)->findAll();
+         $randomCountryIndex = array_rand($countries);
+         $randomCountry = $countries[$randomCountryIndex];
 
-                    // Récupérer un pays aléatoire
-                    $country = $manager->getRepository(Country::class)->findOneBy([], ['id' => 'ASC']);
-                    $animal->setCountry($country);
+         for ($i = 0; $i < 10; $i++) {
+             $animal = new Animal();
+             $animal->setNom($faker->name);
+             $animal->setTailleMoyenne($faker->randomFloat(2, 0.1, 10.0));
+             $animal->setDureeVieMoyenne($faker->numberBetween(1, 20));
+             $animal->setArtMartial($faker->randomElement(['Karaté', 'Judo', 'Taekwondo', 'Kung Fu', 'Dance Classique']));
+             $animal->setNumeroTelephone($faker->phoneNumber);
 
-                    $manager->persist($animal);
-                }
+             // Associer le pays aléatoire
+             $animal->setCountry($randomCountry);
+
+             $manager->persist($animal);
+         }
 
         $manager->flush();
     }
