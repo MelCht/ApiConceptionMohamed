@@ -14,16 +14,24 @@ use Symfony\Component\Validator\Constraints\Collection;
 use Symfony\Component\Validator\Constraints\Type;
 use Symfony\Component\Validator\Constraints\Optional;
 use Doctrine\ORM\EntityManagerInterface;
+use App\Repository\AnimalRepository;
 
 class AnimalsController extends AbstractController
 {
+
+        private $animalRepository;
+
+        public function __construct(AnimalRepository $animalRepository) {
+            $this->animalRepository = $animalRepository;
+        }
+
     // Récupérer la liste de tous les animaux: (ok)
     #[Route('/animals/all', name: 'app_animals', methods: ['GET'])]
     public function getAllAnimals(): JsonResponse
     {
-        $animals = $this->getDoctrine()->getRepository(Animal::class)->findAll();
+        $animals = $this->animalRepository->findAll();
 
-        return new JsonResponse($animals[0]);
+        return new JsonResponse($animals);
     }
 
     // Récupérer un animal par son id: (ok)
@@ -39,7 +47,7 @@ class AnimalsController extends AbstractController
         return $this->json($animal);
     }
 
-    // Récupérer la liste des animaux appartenant à un pays: (Non fonctionnel as of now)
+    // Récupérer la liste des animaux appartenant à un pays: (ok, mais ils sont tous canadien -> id 7)
     #[Route('/animals/country/{countryId}', name: 'app_animals_by_country', methods: ['GET'])]
     public function getAnimalsByCountry(int $countryId): JsonResponse
     {
@@ -54,7 +62,7 @@ class AnimalsController extends AbstractController
          return $this->json($animals);
     }
 
-    // Ajouter un animal: (ok, mais country !== null. Flemme de changer le self par void dans le setCountry dans la classe Animals)
+    // Ajouter un animal: (ok)
      #[Route('/animals/add', name: 'app_animals_add', methods: ['POST'])]
      public function create(Request $request): Response
      {
@@ -120,7 +128,7 @@ class AnimalsController extends AbstractController
         return $this->json(['message' => 'Animal supprimé']);
     }
 
-    // Mettre à jour un animal: (ok, mais quand j'affiche l'animal après avoir changé l'id de son pays, le pays reste en null?)
+    // Mettre à jour un animal: (ok)
    #[Route('/animals/{id}', name: 'app_update_animal', methods: ['PUT'])]
    public function updateAnimal(int $id, Request $request): JsonResponse
    {
@@ -175,7 +183,7 @@ class AnimalsController extends AbstractController
    }
 
 
-    // Mettre à jour le pays d’un animal: (Can't work now)
+    // Mettre à jour le pays d’un animal: (ok)
     #[Route('/animals/{id}/country/{countryId}', name: 'app_update_animal_country', methods: ['PUT'])]
     public function updateAnimalCountry(int $id, int $countryId): JsonResponse
     {
@@ -196,15 +204,18 @@ class AnimalsController extends AbstractController
         $entityManager->persist($animal);
         $entityManager->flush();
 
-        return $this->json(['message' => 'Pays de l\'animal mis à jour']);
+        return $this->json([
+            'message' => 'Pays de l\'animal mis à jour',
+            'animal' => $animal,
+        ]);
     }
 
-    //A supprimer: voir les country
-     #[Route('/countries', name: 'app_countries', methods: ['GET'])]
-       public function getAllCountries(): JsonResponse
-        {
-            $countries = $this->getDoctrine()->getRepository(Country::class)->findAll();
+    //Voir les pays
+     //#[Route('/countries', name: 'app_countries', methods: ['GET'])]
+    //   public function getAllCountries(): JsonResponse
+    //    {
+    //        $countries = $this->getDoctrine()->getRepository(Country::class)->findAll();
 
-            return $this->json($countries);
-        }
-}
+    //        return $this->json($countries);
+    //    }
+    //}

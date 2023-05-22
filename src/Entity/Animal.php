@@ -99,7 +99,7 @@ class Animal
         return $this;
     }
 
-    public function getCountry(): ?Country
+    public function getCountry(): ?String
     {
         return $this->country->getNom();
     }

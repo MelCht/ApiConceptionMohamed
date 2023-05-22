@@ -13,6 +13,7 @@ use App\Repository\CountryRepository;
 class AnimalsFixture extends Fixture implements DependentFixtureInterface
 {
     private $countryRepository;
+
     public function __construct(CountryRepository $countryRepository) {
         $this->countryRepository = $countryRepository;
     }
